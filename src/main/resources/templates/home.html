@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head th:insert="head :: head"><title th:text="${title}"></title></head>
+<body>
+<header th:insert="header :: header"></header>
+<main>
+    <div class="album py-5 bg-light">
+        <div class="container">
+
+            <div class="row row-cols-1 row-cols-sm-3 row-cols-md-4 g-2">
+                <div th:each="el : ${pizzas}" class="col">
+                    <div class="card shadow-sm">
+                        <svg class="bd-placeholder-img card-img-top" width="100%" height="200"
+                             xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid slice"
+                             focusable="false">
+                            <image height="100%" width="100%" th:href="${el.Url}"/>
+                        </svg>
+
+                        <div class="card-body">
+                            <h3 th:text="${el.Name}" class="card-title"></h3>
+                            <p th:text="${el.Composition}" class="card-text text-muted fw-light"></p>
+                            <h4 th:text="${el.Price} + ' BYN'" class="card-title pricing-card-title text-center"></h4>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group container">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+                                    <button type="button" class="btn btn-sm btn-primary"
+                                            th:onclick="'addToStorage(' + ${el.Id} + ')'" >To basket
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+    function addToStorage(id) {
+        let backet = localStorage.getItem('backet');
+        backet += ' ' + id;
+        localStorage.setItem('backet', backet);
+    }
+
+    function backet(){
+        let backet = localStorage.getItem('backet');
+        document.location = `/backet/${backet}`;
+    }
+
+    // Пример отправки POST запроса:
+    async function postData(url = '', data = {}) {
+        // Default options are marked with *
+        const response = await fetch(url, {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, *cors, same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json'
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *client
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
+        });
+        return await response.text(); // parses JSON response into native JavaScript objects
+    }
+</script>
+</body>
+</html>
