@@ -6,29 +6,78 @@
 <main>
     <div class="table-responsive container py-3">
         <table class="table text-center">
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <th style="width: 34%;"></th>-->
-<!--                <th style="width: 22%;">Price</th>-->
-<!--                <th style="width: 22%;">Status</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            <tr th:each="el : ${orders}">-->
-<!--                <th scope="row" class="text-start" th:text="${el.Name}"></th>-->
-<!--                <th scope="row" class="text-center" th:text="${el.Price} + ' BYN'"></th>-->
-<!--                <th scope="row" class="text-center" th:text="${el.Status} + ' BYN'"></th>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--            <tfoot class="table-primary">-->
-<!--            <th scope="row" class="text-center"></th>-->
-<!--            <th scope="row" class="text-center" th:text="${backet.Sum} + ' BYN'"></th>-->
-<!--            </tfoot>-->
+            <thead>
+            <tr>
+                <th hidden style="width: 34%;"></th>
+                <th style="width: 34%;">OrderId</th>
+                <th style="width: 22%;">Price</th>
+                <th style="width: 22%;">Status</th>
+                <th style="width: 22%;">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="el : ${orders}">
+                <th hidden scope="row" class="text-start" th:text="${el.Id}"></th>
+                <th scope="row" class="text-start" th:text="${el.Number}"></th>
+                <th scope="row" class="text-center" th:text="${el.Price} + ' BYN'"></th>
+                <th scope="row" class="text-center" th:text="${el.Status}"></th>
+                <th scope="row" class="text-center">
+                    <button th:if="${el.Status=='Processing'}" type="button" class="btn btn-outline-success"
+                            th:onclick="'javascript:closeOrder(' + ${el.Id} + ');'">Complete
+                    </button>
+                </th>
+            </tr>
+            </tbody>
         </table>
+        <div class="container d-grid gap-2 col-6 mx-auto">
+            <button type="button" class="btn btn-outline-success btn-lg" onclick="getPdf()">PDF</button>
+        </div>
     </div>
-<!--    <div class="container d-grid gap-2 col-6 mx-auto">-->
-<!--        <button type="button" class="btn btn-outline-success btn-lg" onclick="saveOrder()">Submit</button>-->
-<!--    </div>-->
 </main>
 </body>
 </html>
+
+<script>
+    async function closeOrder(orderId) {
+        const response = await fetch('/orders/close', {
+            method: 'POST',
+            cache: 'no-cache',
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *client
+            body: orderId
+        }).then(response => response.text()).then(result => {
+            if (result) {
+                location.reload();
+            } else
+                alert("Ошибка");
+        });
+    }
+
+    async function getPdf() {
+        const response = await fetch('/orders/pdf', {
+            method: 'GET',
+            cache: 'no-cache',
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *client
+        }).then(resp => resp.blob()).then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            // the filename you want
+            a.download = 'orders.pdf';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        })
+            .catch(() => alert('oh no!'));
+    }
+</script>

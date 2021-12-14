@@ -9,7 +9,7 @@ import com.bsuir.webpizza.viewmodels.Backet;
 import com.bsuir.webpizza.viewmodels.BacketItem;
 
 import java.util.*;
-import java.util.stream.Collectors;z
+import java.util.stream.Collectors;
 
 public class HelperService {
     private final PizzaRepository pizzaRepository;
@@ -53,7 +53,7 @@ public class HelperService {
         var order = new MyOrder();
         order.Price = backetModel.Sum;
         order.Name = UUID.randomUUID().toString();
-        order.Status = "Готовится";
+        order.Status = "Processing";
         orderRepository.save(order);
 
         for (BacketItem item : backetModel.Items) {
