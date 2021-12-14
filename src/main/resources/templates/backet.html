@@ -16,12 +16,44 @@
             <tbody>
             <tr th:each="el : ${backet.Items}">
                 <th scope="row" class="text-start" th:text="${el.Name}"></th>
-                <th scope="row" class="text-start" th:text="${el.Price}"></th>
-                <th scope="row" class="text-start" th:text="${el.Quantity}"></th>
+                <th scope="row" class="text-center" th:text="${el.Price} + ' BYN'"></th>
+                <th scope="row" class="text-center" th:text="${el.Quantity}"></th>
             </tr>
             </tbody>
+            <tfoot class="table-primary">
+                <th scope="row" class="text-center"></th>
+                <th scope="row" class="text-center" th:text="${backet.Sum} + ' BYN'"></th>
+                <th scope="row" class="text-center"></th>
+            </tfoot>
         </table>
+    </div>
+    <div class="container d-grid gap-2 col-6 mx-auto">
+        <button type="button" class="btn btn-outline-success btn-lg" onclick="saveOrder()">Submit</button>
     </div>
 </main>
 </body>
 </html>
+
+<script>
+    async function saveOrder(){
+        const response = await fetch('/order', {
+            method: 'POST',
+            cache: 'no-cache',
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrerPolicy: 'no-referrer', // no-referrer, *client
+            body: localStorage.getItem('backet')
+        }).then(response => response.text()).then(result => {
+            if  (result){
+                localStorage.clear();
+                location = '/backet/null';
+                alert("Заказ создан");
+            }
+            else
+                alert("Ошибка создания заказа");
+        });
+    }
+</script>

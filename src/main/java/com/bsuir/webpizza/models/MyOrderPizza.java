@@ -1,14 +1,14 @@
 package com.bsuir.webpizza.models;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-public class Pizza {
+public class MyOrderPizza {
     @Id
     @GeneratedValue(strategy =  GenerationType.AUTO)
-    public Long Id;
+    private Long Id;
 
-    public String Name, Composition, Url;
-    public double Price;
+    public Long PizzaId;
+    public Long MyOrderId;
+    public int Count;
 }
